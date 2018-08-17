@@ -7,10 +7,12 @@ class Client:
 		self.configuration = configuration
 
 	def get(self, path, params = {}, timeout = None):
+		timeout = timeout or self.configuration.timeout
 		r = requests.get(self.url(path), params = params, headers = self.headers(), timeout = timeout)
 		return self.handle_response(r)
 
 	def post(self, path, payload, timeout = None):
+		timeout = timeout or self.configuration.timeout
 		r = requests.post(self.url(path), data = payload, headers = self.headers(), timeout = timeout)
 		return self.handle_response(r)
 
