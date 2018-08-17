@@ -1,0 +1,18 @@
+language: python
+python:
+- 2.6
+- 2.7
+- 3.3
+- 3.4
+- 3.5
+- 3.6
+install:
+- if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install importlib unittest2; fi
+- pip install -r requirements.txt
+- pip install -r test-requirements.txt
+- python setup.py develop
+script:
+- nosetests
+env:
+  global:
+    secure: ppjKrL1CxLcjVt1UOop+eaPYCoB9VoXz6LyE4dGr9R9aZs6+R3y+Z0eCgXoOz82xdi/H8GbN8p/tDho5+AQyBzsIINE5W8hEfWraQo9jo3QspNjFyx5j4d5zf6dglqf3535FNEiI6NPXSlQH/WioUMpMvKS32UwBPhV+IEm7lycQevB+rOC9taDvGgapl2glTp32C7nNAS7iS7jScdhEBPFnPBhGEIUTtiWlsYAXnq1I7Jgub8GAjcFQloM5G92v7BhVQzBco8004lA5AG9zrh8aimB2KOc1ng8mot6x0how4lYImo48wBDDYqtHygO64Qg5fLm/xVtXGqlOYTO+iY0Qm1BeXQhVfmVwD+K8qq3PhZRHCCsjBcL0KTH3IMeHH4f38x0V/KZrEtE6/TPLzTZib2aWCX7Ei88aajZSq0TZA+6qqSq+G+Qs6YqapHl7E86UU+qhxO8ZIDIOsZz8Ikf09qWdwJThIROhYUHI+GB3y/5C4+jOG8hssFy2IO8mQYJRBBp0dwwyoJZq8WkPvwh5efUUReCDhl5vdNy6GE6I6NqsdyouiePAWrLhh1zr2rpZ7kgTyKGp5FInbFOJ7igDJnf5WhouPaFzgtUaVUHQlKKOPJunyxqZbMAPTea2oVRsORXObjCMU+rPSc81tgSc8xOnZKiRYfJPAUeOALI=
