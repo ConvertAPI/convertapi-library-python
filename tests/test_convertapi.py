@@ -27,7 +27,7 @@ class TestConvertapi(utils.TestCase):
 		assert result.conversion_cost > 0
 
 	def test_upload_io(self):
-		string_io = io.StringIO(u'test')
-		upload_io = convertapi.UploadIO(string_io, 'test.txt')
+		bytes_io = io.BytesIO(b'test')
+		upload_io = convertapi.UploadIO(bytes_io, 'test.txt')
 		result = convertapi.convert('pdf', { 'File': upload_io })
 		assert result.conversion_cost > 0
