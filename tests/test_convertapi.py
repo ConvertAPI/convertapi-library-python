@@ -26,6 +26,10 @@ class TestConvertapi(utils.TestCase):
 		result = convertapi.convert('pdf', { 'Url': 'http://convertapi.com' })
 		assert result.conversion_cost > 0
 
+	def test_convert_url_with_timeout_and_format(self):
+		result = convertapi.convert('pdf', { 'Url': 'https://www.w3.org/TR/PNG/iso_8859-1.txt' }, 'web', 100)
+		assert result.conversion_cost > 0
+
 	def test_upload_io(self):
 		bytes_io = io.BytesIO(b'test')
 		upload_io = convertapi.UploadIO(bytes_io, 'test.txt')
@@ -36,3 +40,8 @@ class TestConvertapi(utils.TestCase):
 		files = ['examples/files/test.docx', 'examples/files/test.docx']
 		result = convertapi.convert('zip', { 'Files': files })
 		assert result.conversion_cost > 0
+
+	def test_chained_conversion(self):
+		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx' })
+		zip_result = convertapi.convert('zip', { 'Files': result.files })
+		eq_('test.zip', zip_result.file.filename)
