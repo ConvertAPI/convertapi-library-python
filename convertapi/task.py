@@ -1,5 +1,6 @@
 import convertapi
 
+from convertapi import file_param
 from .result import Result
 
 class Task:
@@ -25,6 +26,16 @@ class Task:
         return Result(response)
 
     def __normalize_params(self):
-        params = self.params.copy()
+        params = {}
+
+        for k, v in self.params.items():
+            if k == 'File':
+                params[k] = file_param.build(v)
+            elif k == 'Files':
+                params[k] = map(file_param.build, v)
+            else:
+                params[k] = v
+
         params.update(self.default_params)
+
         return params

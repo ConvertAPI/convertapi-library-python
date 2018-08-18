@@ -14,6 +14,18 @@ class Client:
 		r = requests.post(self.url(path), data = payload, headers = self.headers(), timeout = timeout)
 		return self.handle_response(r)
 
+	def upload(self, io, filename):
+		url = convertapi.base_uri + 'upload'
+		encoded_filename = requests.utils.quote(filename)
+
+		headers = self.headers()
+		headers.update({
+			'Content-Disposition': "attachment; filename*=UTF-8''" + encoded_filename,
+		})
+
+		r = requests.post(url, data = io, headers = headers, timeout = convertapi.upload_timeout)
+		return self.handle_response(r)
+
 	def download(self, url, path):
 		r = requests.get(url, stream = True, timeout = convertapi.download_timeout)
 
@@ -25,14 +37,12 @@ class Client:
 		return path
 
 	def handle_response(self, r):
-		json = r.json()
-
-		if r.status_code >= 400:
-			raise ConvertApiError(json['Message'])
-
 		r.raise_for_status()
 
-		return json
+		# if r.status_code >= 400:
+		# 	raise ConvertApiError(json['Message'])
+
+		return r.json()
 
 	def url(self, path):
 		return "%s%s?Secret=%s" % (convertapi.base_uri, path, convertapi.api_secret)
