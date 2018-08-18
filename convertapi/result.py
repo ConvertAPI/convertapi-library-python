@@ -14,7 +14,7 @@ class Result:
 
     @property
     def files(self):
-        return map(ResultFile, self.response['Files'])
+        return list(map(ResultFile, self.response['Files']))
 
     def save_files(self, path):
         return [file.save(path) for file in self.files]
