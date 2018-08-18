@@ -7,14 +7,14 @@ from nose.tools import eq_
 
 class TestConvertapi(utils.TestCase):
 	def setUp(self):
-		convertapi.configuration.api_secret = os.environ['CONVERT_API_SECRET']
+		convertapi.api_secret = os.environ['CONVERT_API_SECRET']
 
 	def test_defaults(self):
-		eq_('https://v2.convertapi.com/', convertapi.configuration.base_uri)
+		eq_('https://v2.convertapi.com/', convertapi.base_uri)
 
 	def test_configuration(self):
-		convertapi.configuration.api_secret = 'TEST'
-		eq_('TEST', convertapi.client.configuration.api_secret)
+		convertapi.api_secret = 'TEST'
+		eq_('TEST', convertapi.api_secret)
 
 	def test_convert(self):
 		result = convertapi.convert('pdf', { 'Url': 'http://convertapi.com' }, 'web')

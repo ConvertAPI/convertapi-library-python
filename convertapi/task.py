@@ -7,7 +7,7 @@ class Task:
         self.from_format = from_format
         self.to_format = to_format
         self.params = params
-        self.conversion_timeout = conversion_timeout or convertapi.configuration.conversion_timeout
+        self.conversion_timeout = conversion_timeout or convertapi.conversion_timeout
 
         self.default_params = {
             'Timeout': self.conversion_timeout,
@@ -17,7 +17,7 @@ class Task:
     def run(self):
         params = self.__normalize_params()
         from_format = self.from_format
-        timeout = self.conversion_timeout + convertapi.configuration.conversion_timeout_delta
+        timeout = self.conversion_timeout + convertapi.conversion_timeout_delta
         path = "convert/%s/to/%s" % (from_format, self.to_format)
 
         response = convertapi.client.post(path, params, timeout = timeout)
