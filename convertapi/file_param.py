@@ -13,13 +13,13 @@ def build(resource):
         return resource.url
 
     if isinstance(resource, UploadIO):
-        return resource.upload()
+        return resource.file_id
 
     if isinstance(resource, FileIO):
-        return UploadIO(resource).upload()
+        return UploadIO(resource).file_id
 
     if os.path.isfile(resource):
         io = open(resource, 'rb')
-        return UploadIO(io).upload()
+        return UploadIO(io).file_id
 
     return resource
