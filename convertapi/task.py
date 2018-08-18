@@ -34,7 +34,9 @@ class Task:
             if k == 'File':
                 params[k] = file_param.build(v)
             elif k == 'Files':
-                params[k] = map(file_param.build, v)
+                for idx, val in enumerate(v):
+                    key = '%s[%i]' % (k, idx)
+                    params[key] = file_param.build(val)
             else:
                 params[k] = v
 

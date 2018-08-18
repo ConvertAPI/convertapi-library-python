@@ -31,3 +31,9 @@ class TestConvertapi(utils.TestCase):
 		upload_io = convertapi.UploadIO(bytes_io, 'test.txt')
 		result = convertapi.convert('pdf', { 'File': upload_io })
 		assert result.conversion_cost > 0
+
+	def test_zip_files(self):
+		files = ['examples/files/test.docx', 'examples/files/test.docx']
+		result = convertapi.convert('zip', { 'Files': files })
+		print result.file.url
+		assert result.conversion_cost > 0
