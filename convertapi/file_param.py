@@ -9,6 +9,9 @@ def build(resource):
     if isinstance(resource, Result):
         return resource.file.url
 
+    if isinstance(resource, ResultFile):
+        return resource.url
+
     if isinstance(resource, UploadIO):
         return resource.upload()
 
