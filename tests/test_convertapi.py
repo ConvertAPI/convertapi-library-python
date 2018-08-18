@@ -50,3 +50,7 @@ class TestConvertapi(utils.TestCase):
 	@raises(convertapi.ApiError)
 	def test_api_error(self):
 		convertapi.convert('pdf', { 'Url': 'https://www.w3.org/TR/PNG/iso_8859-1.txt' }, 'web', 600)
+
+	def test_user_info(self):
+		user_info = convertapi.user()
+		assert user_info['Active']
