@@ -18,16 +18,16 @@ class TestConvertapi(utils.TestCase):
 		eq_('TEST', convertapi.api_secret)
 
 	def test_convert_file(self):
-		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx' }, 'docx')
+		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx' })
 		assert result.save_files(tempfile.gettempdir())
 		assert result.conversion_cost > 0
 
 	def test_convert_url(self):
-		result = convertapi.convert('pdf', { 'Url': 'http://convertapi.com' }, 'web')
+		result = convertapi.convert('pdf', { 'Url': 'http://convertapi.com' })
 		assert result.conversion_cost > 0
 
 	def test_upload_io(self):
 		string_io = io.StringIO(u'test')
 		upload_io = convertapi.UploadIO(string_io, 'test.txt')
-		result = convertapi.convert('pdf', { 'File': upload_io }, 'txt')
+		result = convertapi.convert('pdf', { 'File': upload_io })
 		assert result.conversion_cost > 0

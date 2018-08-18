@@ -1,7 +1,9 @@
 import convertapi
 
-from convertapi import file_param
+from convertapi import file_param, format_detector
 from .result import Result
+
+DEFAULT_URL_FORMAT = 'url'
 
 class Task:
     def __init__(self, from_format, to_format, params, conversion_timeout = None):
@@ -17,7 +19,7 @@ class Task:
 
     def run(self):
         params = self.__normalize_params()
-        from_format = self.from_format
+        from_format = self.from_format or self.__detect_format()
         timeout = self.conversion_timeout + convertapi.conversion_timeout_delta
         path = "convert/%s/to/%s" % (from_format, self.to_format)
 
@@ -39,3 +41,13 @@ class Task:
         params.update(self.default_params)
 
         return params
+
+    def __detect_format(self):
+        if 'Url' in self.params:
+            return DEFAULT_URL_FORMAT
+
+        if 'File' in self.params:
+            return format_detector.detect(self.params['File'])
+
+        if 'Files' in self.params:
+            return format_detector.detect(self.params['Files'][0])
