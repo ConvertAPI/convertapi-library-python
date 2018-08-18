@@ -1,6 +1,6 @@
 import convertapi
 
-from convertapi import file_param, format_detector
+from convertapi import file_param, format_detector, utils
 from .result import Result
 
 DEFAULT_URL_FORMAT = 'url'
@@ -34,9 +34,11 @@ class Task:
             if k == 'File':
                 params[k] = file_param.build(v)
             elif k == 'Files':
-                for idx, val in enumerate(v):
+                results = utils.map_in_parallel(file_param.build, v, convertapi.max_parallel_uploads)
+
+                for idx, val in enumerate(results):
                     key = '%s[%i]' % (k, idx)
-                    params[key] = file_param.build(val)
+                    params[key] = val
             else:
                 params[k] = v
 

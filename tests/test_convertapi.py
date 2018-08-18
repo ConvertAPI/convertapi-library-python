@@ -35,5 +35,4 @@ class TestConvertapi(utils.TestCase):
 	def test_zip_files(self):
 		files = ['examples/files/test.docx', 'examples/files/test.docx']
 		result = convertapi.convert('zip', { 'Files': files })
-		print result.file.url
 		assert result.conversion_cost > 0
