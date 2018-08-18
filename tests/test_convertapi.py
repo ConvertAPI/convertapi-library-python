@@ -2,9 +2,10 @@ import convertapi
 import os
 import io
 import tempfile
+import requests
 
 from . import utils
-from nose.tools import eq_
+from nose.tools import *
 
 class TestConvertapi(utils.TestCase):
 	def setUp(self):
@@ -45,3 +46,7 @@ class TestConvertapi(utils.TestCase):
 		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx' })
 		zip_result = convertapi.convert('zip', { 'Files': result.files })
 		eq_('test.zip', zip_result.file.filename)
+
+	@raises(convertapi.ApiError)
+	def test_api_error(self):
+		convertapi.convert('pdf', { 'Url': 'https://www.w3.org/TR/PNG/iso_8859-1.txt' }, 'web', 600)

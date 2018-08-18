@@ -37,10 +37,13 @@ class Client:
 		return path
 
 	def handle_response(self, r):
-		r.raise_for_status()
-
-		# if r.status_code >= 400:
-		# 	raise ConvertApiError(json['Message'])
+		try:
+			r.raise_for_status()
+		except requests.RequestException as e:
+			try:
+				raise ApiError(r.json())
+			except ValueError:
+				raise e
 
 		return r.json()
 
