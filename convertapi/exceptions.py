@@ -3,10 +3,13 @@ class BaseError(BaseException):
 
 class ApiError(BaseError):
 	def __init__(self, result):
-		super(ApiError, self).__init__(result['Message'])
+		message = result.get('Message', '[message not set]')
 
-		self.code = result['Code']
-		self.invalid_parameters = result['InvalidParameters']
+		super(ApiError, self).__init__(message)
+
+		self.code = result.get('Code', '')
+		self.invalid_parameters = result.get('InvalidParameters', '')
 
 	def __str__(self):
- 		return  "%s Code: %s. %s" % (self.message, self.code, self.invalid_parameters)
+		message = "%s Code: %s. %s" % (self.message, self.code, self.invalid_parameters)
+		return message.strip()
