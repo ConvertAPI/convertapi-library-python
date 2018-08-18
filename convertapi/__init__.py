@@ -2,6 +2,7 @@ __version__ = '0.0.1'
 
 from .exceptions import *
 from .client import Client
+from .upload_io import UploadIO
 from .api import convert
 
 # configuration

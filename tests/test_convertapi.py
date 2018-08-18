@@ -1,5 +1,6 @@
 import convertapi
 import os
+import io
 import tempfile
 
 from . import utils
@@ -25,4 +26,8 @@ class TestConvertapi(utils.TestCase):
 		result = convertapi.convert('pdf', { 'Url': 'http://convertapi.com' }, 'web')
 		assert result.conversion_cost > 0
 
-
+	def test_upload_io(self):
+		string_io = io.StringIO(u'test')
+		upload_io = convertapi.UploadIO(string_io, 'test.txt')
+		result = convertapi.convert('pdf', { 'File': upload_io }, 'txt')
+		assert result.conversion_cost > 0

@@ -1,20 +1,17 @@
 import os
-import convertapi
 
 from .result_file import ResultFile
+from .upload_io import UploadIO
 
 def build(resource):
     if isinstance(resource, ResultFile):
         return resource.url
 
+    if isinstance(resource, UploadIO):
+        return resource.upload()
+
     if os.path.isfile(resource):
-        return __upload_file(resource)
+        io = open(resource, 'rb')
+        return UploadIO(io).upload()
 
     return resource
-
-def __upload_file(file):
-    filename = os.path.basename(file)
-
-    with open(file, 'rb') as f:
-        result = convertapi.client.upload(f, filename)
-        return result['FileId']
