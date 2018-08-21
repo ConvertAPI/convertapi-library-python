@@ -1,5 +1,6 @@
 # ConvertAPI Python Client
 
+[![PyPI version](https://badge.fury.io/py/convertapi.svg)](https://badge.fury.io/py/convertapi)
 [![Build Status](https://secure.travis-ci.org/ConvertAPI/convertapi-python.svg)](http://travis-ci.org/ConvertAPI/convertapi-python)
 
 ## Convert your files with our online file conversion API
