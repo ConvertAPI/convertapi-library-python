@@ -30,7 +30,7 @@ You can get your secret at https://www.convertapi.com/a
 ```python
 import convertapi
 
-convertapi.api_secret = 'your api secret'
+convertapi.api_secret = 'your-api-secret'
 ```
 
 ### File conversion
