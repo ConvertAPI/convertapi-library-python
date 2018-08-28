@@ -18,4 +18,4 @@ merge_result = convertapi.convert('merge', { 'Files': files })
 
 saved_files = merge_result.save_files(tempfile.gettempdir())
 
-print("The thumbnail saved to %s" % saved_files)
+print("The PDF saved to %s" % saved_files)
