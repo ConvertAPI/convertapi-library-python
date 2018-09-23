@@ -37,6 +37,10 @@ class TestConvertapi(utils.TestCase):
 		result = convertapi.convert('pdf', { 'File': upload_io })
 		assert result.conversion_cost > 0
 
+	def test_download_io(self):
+		result = convertapi.convert('pdf', { 'Url': 'https://www.w3.org/TR/PNG/iso_8859-1.txt' })
+		assert len(result.file.io.getvalue()) > 0
+
 	def test_zip_files(self):
 		files = ['examples/files/test.docx', 'examples/files/test.docx']
 		result = convertapi.convert('zip', { 'Files': files })

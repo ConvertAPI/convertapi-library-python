@@ -1,5 +1,6 @@
 import requests
 import convertapi
+from io import BytesIO
 
 from .exceptions import *
 
@@ -35,6 +36,10 @@ class Client:
 					f.write(chunk)
 
 		return path
+
+	def download_io(self, url):
+		response = requests.get(url, timeout = convertapi.download_timeout)
+		return BytesIO(response.content)
 
 	def handle_response(self, r):
 		try:
