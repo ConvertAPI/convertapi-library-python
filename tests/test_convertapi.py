@@ -23,6 +23,10 @@ class TestConvertapi(utils.TestCase):
 		assert result.save_files(tempfile.gettempdir())
 		assert result.conversion_cost > 0
 
+	def test_convert_file_url(self):
+		result = convertapi.convert('pdf', { 'File': 'https://cdn.convertapi.com/cara/testfiles/document.docx?test=1' })
+		assert result.conversion_cost > 0
+
 	def test_convert_url(self):
 		result = convertapi.convert('pdf', { 'Url': 'http://convertapi.com' })
 		assert result.conversion_cost > 0
