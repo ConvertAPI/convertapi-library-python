@@ -99,7 +99,7 @@ print(user_info['SecondsLeft'])
 
 ### More examples
 
-You can find more advanced examples in the [https://github.com/ConvertAPI/convertapi-python/tree/master/examples](examples) folder.
+You can find more advanced examples in the [/examples](https://github.com/ConvertAPI/convertapi-python/tree/master/examples) folder.
 
 ## Development
 
