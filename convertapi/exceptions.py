@@ -3,9 +3,9 @@ class BaseError(BaseException):
 
 class ApiError(BaseError):
 	def __init__(self, result):
-		message = result.get('Message', '[message not set]')
+		self.message = result.get('Message', '[message not set]')
 
-		super(ApiError, self).__init__(message)
+		super(ApiError, self).__init__(self.message)
 
 		self.code = result.get('Code', '')
 		self.invalid_parameters = result.get('InvalidParameters', '')
