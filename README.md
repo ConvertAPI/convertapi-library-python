@@ -5,7 +5,7 @@
 
 ## Convert your files with our online file conversion API
 
-The ConvertAPI helps converting various file formats. Creating PDF and Images from various sources like Word, Excel, Powerpoint, images, web pages or raw HTML codes. Merge, Encrypt, Split, Repair and Decrypt PDF files. And many others files manipulations. In just few minutes you can integrate it into your application and use it easily.
+ConvertAPI helps to convert various file formats. Creating PDF and Images from various sources like Word, Excel, Powerpoint, images, web pages or raw HTML codes. Merge, Encrypt, Split, Repair and Decrypt PDF files and many other manipulations. You can integrate it into your application in just a few minutes and use it easily.
 
 ## Installation
 
@@ -35,7 +35,7 @@ convertapi.api_secret = 'your-api-secret'
 
 #### Proxy configuration
 
-If you need to use proxy, you specify it using `HTTPS_PROXY` environment variable when running your script.
+If you need to use a proxy, you can specify it using `HTTPS_PROXY` environment variable when running your script.
 
 Example:
 
@@ -45,7 +45,7 @@ CONVERT_API_SECRET=secret HTTPS_PROXY=https://user:pass@127.0.0.1:9000/ python c
 
 ### File conversion
 
-Example to convert file to PDF. All supported formats and options can be found
+Convert a file to PDF example. All supported file formats and options can be found
 [here](https://www.convertapi.com).
 
 ```python
@@ -83,7 +83,7 @@ result = convertapi.convert(
 
 #### Additional conversion parameters
 
-ConvertAPI accepts extra conversion parameters depending on converted formats. All conversion
+ConvertAPI accepts additional conversion parameters depending on selected formats. All conversion
 parameters and explanations can be found [here](https://www.convertapi.com).
 
 ```python
@@ -99,7 +99,7 @@ result = convertapi.convert(
 
 ### User information
 
-You can always check remaining seconds amount by fetching [user information](https://www.convertapi.com/doc/user).
+You can always check your remaining seconds amount programatically by fetching [user information](https://www.convertapi.com/doc/user).
 
 ```python
 user_info = convertapi.user()
@@ -109,7 +109,7 @@ print(user_info['SecondsLeft'])
 
 ### More examples
 
-You can find more advanced examples in the [/examples](https://github.com/ConvertAPI/convertapi-python/tree/master/examples) folder.
+Find more advanced examples in the [/examples](https://github.com/ConvertAPI/convertapi-python/tree/master/examples) folder.
 
 ## Development
 
