@@ -10,6 +10,7 @@ from nose.tools import *
 class TestConvertapi(utils.TestCase):
 	def setUp(self):
 		convertapi.api_secret = os.environ['CONVERT_API_SECRET']
+		convertapi.max_parallel_uploads = 10
 
 	def test_defaults(self):
 		eq_('https://v2.convertapi.com/', convertapi.base_uri)
@@ -22,6 +23,11 @@ class TestConvertapi(utils.TestCase):
 		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx' })
 		assert result.save_files(tempfile.gettempdir())
 		assert result.conversion_cost > 0
+
+	def test_convert_file_no_parallelizm(self):
+		convertapi.max_parallel_uploads = 1
+		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx' })
+		assert result.save_files(tempfile.gettempdir())
 
 	def test_convert_file_alternative(self):
 		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx', 'converter': 'openoffice' })
