@@ -23,6 +23,9 @@ class Task:
         timeout = self.timeout + convertapi.conversion_timeout_delta
         path = "convert/%s/to/%s" % (from_format, self.to_format)
 
+        if 'converter' in params:
+            path += "/converter/%s" % (params['converter'])
+
         response = convertapi.client.post(path, params, timeout = timeout)
 
         return Result(response)
