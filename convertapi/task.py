@@ -20,7 +20,7 @@ class Task:
     def run(self):
         params = self.__normalize_params()
         from_format = self.from_format or self.__detect_format()
-        timeout = self.timeout + convertapi.conversion_timeout_delta
+        timeout = self.timeout + convertapi.conversion_timeout_delta if self.timeout else None
         path = "convert/%s/to/%s" % (from_format, self.to_format)
 
         if 'converter' in params:

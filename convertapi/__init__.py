@@ -11,10 +11,10 @@ api_secret = None
 base_uri = 'https://v2.convertapi.com/'
 user_agent = 'ConvertAPI-Python/' + __version__
 timeout = 60
-conversion_timeout = 180
+conversion_timeout = None
 conversion_timeout_delta = 10
-upload_timeout = 600
-download_timeout = 600
+upload_timeout = 1800
+download_timeout = 1800
 max_parallel_uploads = 10
 
 client = Client()
