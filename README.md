@@ -84,7 +84,7 @@ result = convertapi.convert(
 #### Additional conversion parameters
 
 ConvertAPI accepts additional conversion parameters depending on selected formats. All conversion
-parameters and explanations can be found [here](https://www.convertapi.com).
+parameters and explanations can be found [here](https://www.convertapi.com/conversions).
 
 ```python
 result = convertapi.convert(
