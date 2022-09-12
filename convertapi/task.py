@@ -3,7 +3,7 @@ import convertapi
 from convertapi import file_param, format_detector, utils
 from .result import Result
 
-DEFAULT_URL_FORMAT = 'url'
+DEFAULT_URL_FORMAT = 'web'
 
 class Task:
     def __init__(self, from_format, to_format, params, timeout = None):
@@ -50,6 +50,9 @@ class Task:
         return params
 
     def __detect_format(self):
+        if str(self.to_format).lower() == 'zip':
+            return 'any'
+
         if 'Url' in self.params:
             return DEFAULT_URL_FORMAT
 
