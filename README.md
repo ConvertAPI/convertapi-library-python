@@ -1,7 +1,8 @@
 # ConvertAPI Python Client
 
 [![PyPI version](https://badge.fury.io/py/convertapi.svg)](https://badge.fury.io/py/convertapi)
-[![Build Status](https://secure.travis-ci.org/ConvertAPI/convertapi-python.svg)](http://travis-ci.org/ConvertAPI/convertapi-python)
+[![Build Status](https://github.com/ConvertAPI/convertapi-python/actions/workflows/main.yml/badge.svg)](https://github.com/ConvertAPI/convertapi-python/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Convert your files with our online file conversion API
 
