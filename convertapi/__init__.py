@@ -10,7 +10,7 @@ from .api import convert, user
 api_secret = None
 base_uri = 'https://v2.convertapi.com/'
 user_agent = 'ConvertAPI-Python/' + __version__
-timeout = 60
+timeout = 1800
 conversion_timeout = None
 conversion_timeout_delta = 10
 upload_timeout = 1800
