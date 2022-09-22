@@ -47,7 +47,7 @@ CONVERT_API_SECRET=secret HTTPS_PROXY=https://user:pass@127.0.0.1:9000/ python c
 ### File conversion
 
 Convert a file to PDF example. All supported file formats and options can be found
-[here](https://www.convertapi.com).
+[here](https://www.convertapi.com/conversions).
 
 ```python
 result = convertapi.convert('pdf', { 'File': '/path/to/my_file.docx' })
