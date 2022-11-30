@@ -111,12 +111,14 @@ class TestAsyncConvertapi(utils.TestCase):
 			raise AssertionError
 
 
+retry_sleep_base_timeout = 0.1
+
 def get_poll_result(job_id, retry_count=5):
 	try:
 		result = convertapi.async_poll(job_id)
-	except Exception as error:
+	except convertapi.ApiError:
 		if retry_count > 0:
-			time.sleep(0.1)
+			time.sleep((1 + 0.1) ** (5 - retry_count) - 1)
 			return get_poll_result(job_id, retry_count=retry_count - 1)
 		else:
 			raise error
