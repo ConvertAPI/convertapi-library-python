@@ -1,9 +1,11 @@
+from unittest import mock
 import convertapi
 import os
 import io
 import tempfile
 import time
 import requests
+from requests.models import Response
 
 from . import utils
 from nose.tools import *
@@ -76,18 +78,28 @@ class TestConvertapi(utils.TestCase):
 		user_info = convertapi.user()
 		assert user_info['Active']
 
+
 class TestAsyncConvertapi(utils.TestCase):
 	def setUp(self):
 		convertapi.api_secret = os.environ['CONVERT_API_SECRET']
 		convertapi.max_parallel_uploads = 10
 
-	def test_async_convert_file(self):
+	def test_async_conversion_and_polling(self):
 		convert_result = convertapi.async_convert('pdf', { 'File': 'examples/files/test.docx' })
 		assert convert_result.response['JobId']
 
 		poll_result = get_poll_result(convert_result.response['JobId'])
 		assert poll_result.save_files(tempfile.gettempdir())
 		assert poll_result.conversion_cost > 0
+
+	def test_polling_of_invalid_job_id(self):
+		fake_job_id = 'rwvd6vtq58eurfwv5zw5h2ci2pgno1pn'
+		try:
+			convertapi.async_poll(fake_job_id)
+		except requests.exceptions.HTTPError:
+			pass
+		else:
+			raise AssertionError
 
 
 def get_poll_result(job_id, retry_count=5):
