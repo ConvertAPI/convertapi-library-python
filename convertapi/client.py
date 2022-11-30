@@ -54,7 +54,7 @@ class Client:
 		try:
 			return r.json()
 		except simplejson.errors.JSONDecodeError as e:
-			raise ApiError({'message': 'Conversion in progress'})
+			raise AsyncConversionInProgress
 
 	def url(self, path):
 		return "%s%s?Secret=%s" % (convertapi.base_uri, path, convertapi.api_secret)

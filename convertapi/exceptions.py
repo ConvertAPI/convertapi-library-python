@@ -13,3 +13,7 @@ class ApiError(BaseError):
 	def __str__(self):
 		message = "%s Code: %s. %s" % (self.message, self.code, self.invalid_parameters)
 		return message.strip()
+
+
+class AsyncConversionInProgress(BaseError):
+	pass

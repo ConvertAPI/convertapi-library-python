@@ -105,7 +105,7 @@ class TestAsyncConvertapi(utils.TestCase):
 		convert_result = convertapi.async_convert('pdf', { 'File': 'examples/files/test.docx' })
 		try:
 			convertapi.async_poll(convert_result.response['JobId'])
-		except convertapi.ApiError:
+		except convertapi.AsyncConversionInProgress:
 			pass
 		else:
 			raise AssertionError
@@ -116,7 +116,7 @@ retry_sleep_base_timeout = 0.1
 def get_poll_result(job_id, retry_count=5):
 	try:
 		result = convertapi.async_poll(job_id)
-	except convertapi.ApiError:
+	except convertapi.AsyncConversionInProgress:
 		if retry_count > 0:
 			time.sleep((1 + 0.1) ** (5 - retry_count) - 1)
 			return get_poll_result(job_id, retry_count=retry_count - 1)
