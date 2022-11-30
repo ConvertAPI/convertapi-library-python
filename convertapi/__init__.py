@@ -3,7 +3,7 @@ __version__ = '1.5.0'
 from .exceptions import *
 from .client import Client
 from .upload_io import UploadIO
-from .api import convert, user
+from .api import convert, user, async_convert, async_poll
 
 # configuration
 

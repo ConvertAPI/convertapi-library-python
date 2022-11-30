@@ -6,11 +6,12 @@ from .result import Result
 DEFAULT_URL_FORMAT = 'web'
 
 class Task:
-    def __init__(self, from_format, to_format, params, timeout = None):
+    def __init__(self, from_format, to_format, params, timeout = None, is_async = False):
         self.from_format = from_format
         self.to_format = to_format
         self.params = params
         self.timeout = timeout or convertapi.conversion_timeout
+        self.is_async = is_async
 
         self.default_params = {
             'Timeout': self.timeout,
@@ -21,7 +22,8 @@ class Task:
         params = self.__normalize_params()
         from_format = self.from_format or self.__detect_format()
         timeout = self.timeout + convertapi.conversion_timeout_delta if self.timeout else None
-        path = "convert/%s/to/%s" % (from_format, self.to_format)
+        base_path = 'convert' if not self.is_async else 'async/convert'
+        path = "%s/%s/to/%s" % (base_path, from_format, self.to_format)
 
         if 'converter' in params:
             path += "/converter/%s" % (params['converter'])

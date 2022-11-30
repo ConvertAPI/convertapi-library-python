@@ -2,6 +2,7 @@ import convertapi
 import os
 import io
 import tempfile
+import time
 import requests
 
 from . import utils
@@ -74,3 +75,29 @@ class TestConvertapi(utils.TestCase):
 	def test_user_info(self):
 		user_info = convertapi.user()
 		assert user_info['Active']
+
+class TestAsyncConvertapi(utils.TestCase):
+	def setUp(self):
+		convertapi.api_secret = os.environ['CONVERT_API_SECRET']
+		convertapi.max_parallel_uploads = 10
+
+	def test_async_convert_file(self):
+		convert_result = convertapi.async_convert('pdf', { 'File': 'examples/files/test.docx' })
+		assert convert_result.response['JobId']
+
+		poll_result = get_poll_result(convert_result.response['JobId'])
+		assert poll_result.save_files(tempfile.gettempdir())
+		assert poll_result.conversion_cost > 0
+
+
+def get_poll_result(job_id, retry_count=5):
+	try:
+		result = convertapi.async_poll(job_id)
+	except Exception as error:
+		if retry_count > 0:
+			time.sleep(0.1)
+			return get_poll_result(job_id, retry_count=retry_count - 1)
+		else:
+			raise error
+	else:
+		return result
