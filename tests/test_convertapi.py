@@ -1,11 +1,9 @@
-from unittest import mock
 import convertapi
 import os
 import io
 import tempfile
 import time
 import requests
-from requests.models import Response
 
 from . import utils
 from nose.tools import *
