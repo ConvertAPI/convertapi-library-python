@@ -101,6 +101,15 @@ class TestAsyncConvertapi(utils.TestCase):
 		else:
 			raise AssertionError
 
+	def test_polling_too_fast_and_getting_202_accepted(self):
+		convert_result = convertapi.async_convert('pdf', { 'File': 'examples/files/test.docx' })
+		try:
+			convertapi.async_poll(convert_result.response['JobId'])
+		except convertapi.ApiError:
+			pass
+		else:
+			raise AssertionError
+
 
 def get_poll_result(job_id, retry_count=5):
 	try:

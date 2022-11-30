@@ -1,5 +1,6 @@
 import requests
 import convertapi
+import simplejson
 
 from io import BytesIO
 from .exceptions import *
@@ -50,7 +51,10 @@ class Client:
 			except ValueError:
 				raise e
 
-		return r.json()
+		try:
+			return r.json()
+		except simplejson.errors.JSONDecodeError as e:
+			raise ApiError({'message': 'Conversion in progress'})
 
 	def url(self, path):
 		return "%s%s?Secret=%s" % (convertapi.base_uri, path, convertapi.api_secret)
