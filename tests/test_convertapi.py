@@ -113,7 +113,7 @@ class TestAsyncConvertapi(utils.TestCase):
 	def get_poll_result(self, job_id, retry_count=5):
 		try:
 			result = convertapi.async_poll(job_id)
-		except convertapi.AsyncConversionInProgress:
+		except convertapi.AsyncConversionInProgress as error:
 			if retry_count > 0:
 				time.sleep((1 + 0.1) ** (5 - retry_count) - 1)
 				return self.get_poll_result(job_id, retry_count=retry_count - 1)

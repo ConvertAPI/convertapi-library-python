@@ -2,6 +2,7 @@ import convertapi
 
 from .task import Task
 from .result import Result
+from .exceptions import AsyncConversionInProgress
 
 def convert(to_format, params, from_format = None, timeout = None):
     task = Task(from_format, to_format, params, timeout = timeout)
@@ -19,4 +20,6 @@ def async_convert(to_format, params, from_format = None, timeout = None):
 
 def async_poll(job_id):
     response = convertapi.client.get('async/job/%s' % job_id)
+    if not response:
+        raise AsyncConversionInProgress
     return Result(response)

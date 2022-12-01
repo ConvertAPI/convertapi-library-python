@@ -52,7 +52,7 @@ class Client:
 				raise e
 
 		if r.content == b'':
-			raise AsyncConversionInProgress
+			return None
 
 		return r.json()
 
