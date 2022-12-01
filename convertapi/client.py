@@ -1,6 +1,5 @@
 import requests
 import convertapi
-import simplejson
 
 from io import BytesIO
 from .exceptions import *
