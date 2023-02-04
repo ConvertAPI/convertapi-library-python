@@ -16,5 +16,6 @@ conversion_timeout_delta = 10
 upload_timeout = 1800
 download_timeout = 1800
 max_parallel_uploads = 10
+verify_ssl = True
 
 client = Client()
