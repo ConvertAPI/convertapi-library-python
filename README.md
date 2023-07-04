@@ -112,7 +112,7 @@ print(user_info['SecondsLeft'])
 
 Set `base_uri` parameter to use other service domains. Dedicated to the region [domain list](https://www.convertapi.com/doc/servers-location).
 
-```
+```python
 convertapi.base_uri = 'https://eu-v2.convertapi.com/'
 ```
 
