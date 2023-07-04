@@ -108,6 +108,14 @@ user_info = convertapi.user()
 print(user_info['SecondsLeft'])
 ```
 
+### Alternative domain
+
+Set `base_uri` parameter to use other service domains. Dedicated to the region [domain list](https://www.convertapi.com/doc/servers-location).
+
+```
+convertapi.base_uri = 'https://eu-v2.convertapi.com/'
+```
+
 ### More examples
 
 Find more advanced examples in the [/examples](https://github.com/ConvertAPI/convertapi-python/tree/master/examples) folder.
