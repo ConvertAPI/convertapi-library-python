@@ -66,6 +66,11 @@ class TestConvertapi(utils.TestCase):
 		zip_result = convertapi.convert('zip', { 'Files': result.files })
 		eq_('test.zip', zip_result.file.filename)
 
+	def test_compare_files(self):
+		file = 'examples/files/test.docx'
+		result = convertapi.convert('compare', { 'File': file, 'CompareFile': file })
+		assert result.conversion_cost > 0
+
 	@raises(convertapi.ApiError)
 	def test_api_error(self):
 		convertapi.api_secret = 'TEST'
