@@ -21,10 +21,11 @@ class Task:
         params = self.__normalize_params()
         from_format = self.from_format or self.__detect_format()
         timeout = self.timeout + convertapi.conversion_timeout_delta if self.timeout else None
+        converter = self.__detect_converter()
         path = "convert/%s/to/%s" % (from_format, self.to_format)
 
-        if 'converter' in params:
-            path += "/converter/%s" % (params['converter'])
+        if converter != None:
+            path += "/converter/%s" % (converter)
 
         response = convertapi.client.post(path, params, timeout = timeout)
 
@@ -61,3 +62,10 @@ class Task:
 
         if 'Files' in self.params:
             return format_detector.detect(self.params['Files'][0])
+
+    def __detect_converter(self):
+        for k, v in self.params.items():
+            if k.lower() == 'converter':
+                return v
+
+        return None
