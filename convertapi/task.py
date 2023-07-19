@@ -35,7 +35,7 @@ class Task:
         params = {}
 
         for k, v in self.params.items():
-            if k == 'File':
+            if k != 'StoreFile' and k.endswith('File'):
                 params[k] = file_param.build(v)
             elif k == 'Files':
                 results = utils.map_in_parallel(file_param.build, v, convertapi.max_parallel_uploads)
