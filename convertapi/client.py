@@ -51,6 +51,9 @@ class Client:
 			except ValueError:
 				raise e
 
+		if r.content == b'':
+			return None
+
 		return r.json()
 
 	def __url(self, path):

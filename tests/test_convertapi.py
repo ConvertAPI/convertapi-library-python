@@ -2,6 +2,7 @@ import convertapi
 import os
 import io
 import tempfile
+import time
 import requests
 
 from . import utils
@@ -74,3 +75,49 @@ class TestConvertapi(utils.TestCase):
 	def test_user_info(self):
 		user_info = convertapi.user()
 		assert user_info['Active']
+
+
+class TestAsyncConvertapi(utils.TestCase):
+	retry_sleep_base_timeout = 0.1
+
+	def setUp(self):
+		convertapi.api_secret = os.environ['CONVERT_API_SECRET']
+		convertapi.max_parallel_uploads = 10
+
+	def test_async_conversion_and_polling(self):
+		convert_result = convertapi.async_convert('pdf', { 'File': 'examples/files/test.docx' })
+		assert convert_result.response['JobId']
+
+		poll_result = self.get_poll_result(convert_result.response['JobId'])
+		assert poll_result.save_files(tempfile.gettempdir())
+		assert poll_result.conversion_cost > 0
+
+	def test_polling_of_invalid_job_id(self):
+		fake_job_id = 'rwvd6vtq58eurfwv5zw5h2ci2pgno1pn'
+		try:
+			convertapi.async_poll(fake_job_id)
+		except requests.exceptions.HTTPError:
+			pass
+		else:
+			raise AssertionError
+
+	def test_polling_too_fast_and_getting_202_accepted(self):
+		convert_result = convertapi.async_convert('pdf', { 'File': 'examples/files/test.docx' })
+		try:
+			convertapi.async_poll(convert_result.response['JobId'])
+		except convertapi.AsyncConversionInProgress:
+			pass
+		else:
+			raise AssertionError
+
+	def get_poll_result(self, job_id, retry_count=5):
+		try:
+			result = convertapi.async_poll(job_id)
+		except convertapi.AsyncConversionInProgress as error:
+			if retry_count > 0:
+				time.sleep((1 + 0.1) ** (5 - retry_count) - 1)
+				return self.get_poll_result(job_id, retry_count=retry_count - 1)
+			else:
+				raise error
+		else:
+			return result
