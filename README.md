@@ -34,6 +34,17 @@ import convertapi
 convertapi.api_secret = 'your-api-secret'
 ```
 
+If you prefer to use [token and API key](https://www.convertapi.com/doc/auth#token), you can configure like this:
+
+```python
+import convertapi
+
+convertapi.api_token = 'your-api-token'
+convertapi.api_key = 000000 # your api key
+```
+
+If both API secret and token are configured, token will be used.
+
 #### Proxy configuration
 
 If you need to use a proxy, you can specify it using `HTTPS_PROXY` environment variable when running your script.
