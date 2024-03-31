@@ -54,6 +54,12 @@ class Client:
 		return r.json()
 
 	def __url(self, path):
+		if convertapi.api_token != None and convertapi.api_key != None:
+			return "%s%s?Token=%s&ApiKey=%d" % (convertapi.base_uri, path, convertapi.api_token, convertapi.api_key)
+
+		if convertapi.api_token != None:
+			return "%s%s?Token=%s" % (convertapi.base_uri, path, convertapi.api_token)
+
 		return "%s%s?Secret=%s" % (convertapi.base_uri, path, convertapi.api_secret)
 
 	def __session(self):
