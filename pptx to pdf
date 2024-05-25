@@ -1,0 +1,21 @@
+import comtypes.client
+
+def pptx_to_pdf(pptx_path, pdf_path):
+    # Initialize PowerPoint application
+    powerpoint = comtypes.client.CreateObject("PowerPoint.Application")
+    powerpoint.Visible = 1
+
+    # Open the PowerPoint file
+    presentation = powerpoint.Presentations.Open(pptx_path)
+    
+    # Save as PDF
+    presentation.SaveAs(pdf_path, FileFormat=32)  # 32 is the magic number for the PDF format
+    
+    # Close the presentation and PowerPoint application
+    presentation.Close()
+    powerpoint.Quit()
+
+# Example usage
+pptx_path = "path/to/your/presentation.pptx"
+pdf_path = "path/to/save/converted_presentation.pdf"
+pptx_to_pdf(pptx_path, pdf_path)
