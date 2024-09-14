@@ -111,12 +111,13 @@ result = convertapi.convert(
 
 ### User information
 
-You can always check your remaining seconds amount programatically by fetching [user information](https://www.convertapi.com/doc/user).
+You can always check your usage by fetching [user information](https://www.convertapi.com/doc/user).
 
 ```python
 user_info = convertapi.user()
 
-print(user_info['SecondsLeft'])
+print(user_info['ConversionsTotal'])
+print(user_info['ConversionsConsumed'])
 ```
 
 ### Alternative domain
