@@ -15,8 +15,8 @@ user_agent = 'ConvertAPI-Python/' + __version__
 timeout = 1800
 conversion_timeout = None
 conversion_timeout_delta = 10
-upload_timeout = 1800
-download_timeout = 1800
+upload_timeout = None
+download_timeout = None
 max_parallel_uploads = 10
 verify_ssl = True
 
