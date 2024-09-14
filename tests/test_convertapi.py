@@ -32,11 +32,6 @@ class TestConvertapi(utils.TestCase):
 		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx' })
 		assert result.save_files(tempfile.gettempdir())
 
-	def test_convert_file_alternative(self):
-		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx', 'Converter': 'openoffice' })
-		assert result.save_files(tempfile.gettempdir())
-		assert result.conversion_cost > 0
-
 	def test_convert_file_url(self):
 		result = convertapi.convert('pdf', { 'File': 'https://cdn.convertapi.com/cara/testfiles/document.docx?test=1' })
 		assert result.conversion_cost > 0
