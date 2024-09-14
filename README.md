@@ -1,7 +1,7 @@
 # ConvertAPI Python Client
 
 [![PyPI version](https://badge.fury.io/py/convertapi.svg)](https://badge.fury.io/py/convertapi)
-[![Build Status](https://github.com/ConvertAPI/convertapi-python/actions/workflows/main.yml/badge.svg)](https://github.com/ConvertAPI/convertapi-python/actions)
+[![Build Status](https://github.com/ConvertAPI/convertapi-library-python/actions/workflows/main.yml/badge.svg)](https://github.com/ConvertAPI/convertapi-library-python/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Convert your files with our online file conversion API
@@ -119,7 +119,7 @@ convertapi.base_uri = 'https://eu-v2.convertapi.com/'
 
 ### More examples
 
-Find more advanced examples in the [/examples](https://github.com/ConvertAPI/convertapi-python/tree/master/examples) folder.
+Find more advanced examples in the [/examples](https://github.com/ConvertAPI/convertapi-library-python/tree/master/examples) folder.
 
 ## Development
 
@@ -127,7 +127,7 @@ Execute `CONVERT_API_SECRET=your_secret nosetests --nocapture` to run the tests.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/ConvertAPI/convertapi-python. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/ConvertAPI/convertapi-library-python. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 

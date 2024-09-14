@@ -3,7 +3,7 @@ https://www.convertapi.com
 (c) 2011-2018 Baltsoft
 
 ConvertAPI.Python
-https://github.com/ConvertAPI/convertapi-python
+https://github.com/ConvertAPI/convertapi-library-python
 Copyright (c) 2018 Tomas Rutkauskas
 
 The MIT License
