@@ -2,7 +2,7 @@ import convertapi
 import os
 import tempfile
 
-convertapi.api_secret = os.environ['CONVERT_API_SECRET'] # your api secret
+convertapi.api_credentials = os.environ['CONVERT_API_SECRET'] # your api secret or token
 
 # Short example of conversions chaining, the PDF pages extracted and saved as separated JPGs and then ZIP'ed
 # https://www.convertapi.com/doc/chaining

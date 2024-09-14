@@ -10,17 +10,15 @@ from nose.tools import *
 
 class TestConvertapi(utils.TestCase):
 	def setUp(self):
-		convertapi.api_secret = os.environ['CONVERT_API_SECRET']
-		convertapi.api_key = None
-		convertapi.api_token = None
+		convertapi.api_credentials = os.environ['CONVERT_API_SECRET']
 		convertapi.max_parallel_uploads = 10
 
 	def test_defaults(self):
 		eq_('https://v2.convertapi.com/', convertapi.base_uri)
 
 	def test_configuration(self):
-		convertapi.api_secret = 'TEST'
-		eq_('TEST', convertapi.api_secret)
+		convertapi.api_credentials = 'TEST'
+		eq_('TEST', convertapi.api_credentials)
 
 	def test_convert_file(self):
 		result = convertapi.convert('pdf', { 'File': 'examples/files/test.docx' })
@@ -71,24 +69,9 @@ class TestConvertapi(utils.TestCase):
 
 	@raises(convertapi.ApiError)
 	def test_api_error(self):
-		convertapi.api_secret = 'TEST'
+		convertapi.api_credentials = 'TEST'
 		convertapi.convert('pdf', { 'Url': 'https://www.w3.org/TR/PNG/iso_8859-1.txt' })
 
 	def test_user_info(self):
 		user_info = convertapi.user()
 		assert user_info['Active']
-
-	@responses.activate
-	def test_with_token(self):
-		convertapi.api_token = 'TEST'
-		responses.add(responses.POST, 'https://v2.convertapi.com/convert/web/to/pdf?Token=TEST', json = { 'ConversionCost': 123 })
-		result = convertapi.convert('pdf', { 'Url': 'dummyurl' })
-		assert result.conversion_cost == 123
-
-	@responses.activate
-	def test_with_token_and_api_key(self):
-		convertapi.api_token = 'TEST'
-		convertapi.api_key = 1
-		responses.add(responses.POST, 'https://v2.convertapi.com/convert/web/to/pdf?Token=TEST&ApiKey=1', json = { 'ConversionCost': 123 })
-		result = convertapi.convert('pdf', { 'Url': 'dummyurl' })
-		assert result.conversion_cost == 123

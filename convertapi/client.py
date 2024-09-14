@@ -54,17 +54,12 @@ class Client:
 		return r.json()
 
 	def __url(self, path):
-		if convertapi.api_token != None and convertapi.api_key != None:
-			return "%s%s?Token=%s&ApiKey=%d" % (convertapi.base_uri, path, convertapi.api_token, convertapi.api_key)
-
-		if convertapi.api_token != None:
-			return "%s%s?Token=%s" % (convertapi.base_uri, path, convertapi.api_token)
-
-		return "%s%s?Secret=%s" % (convertapi.base_uri, path, convertapi.api_secret)
+		return convertapi.base_uri + path
 
 	def __session(self):
 		s = requests.Session()
 		s.headers.update({ 'User-Agent': convertapi.user_agent })
+		s.headers.update({ 'Authorization': 'Bearer ' + convertapi.api_credentials })
 		s.verify = convertapi.verify_ssl
 
 		return s

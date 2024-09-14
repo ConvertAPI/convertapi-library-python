@@ -7,9 +7,7 @@ from .api import convert, user
 
 # configuration
 
-api_secret = None
-api_key = None
-api_token = None
+api_credentials = None
 base_uri = 'https://v2.convertapi.com/'
 user_agent = 'ConvertAPI-Python/' + __version__
 timeout = 1800
