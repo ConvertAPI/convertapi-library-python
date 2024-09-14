@@ -26,24 +26,13 @@ Install from source with:
 
 ### Configuration
 
-You can get your secret at https://www.convertapi.com/a
+You can get your API credentials at https://www.convertapi.com/a
 
 ```python
 import convertapi
 
-convertapi.api_secret = 'your-api-secret'
+convertapi.api_credentials = 'your-api-secret-or-token'
 ```
-
-If you prefer to use [token and API key](https://www.convertapi.com/doc/auth#token), you can configure like this:
-
-```python
-import convertapi
-
-convertapi.api_token = 'your-api-token'
-convertapi.api_key = 000000 # your api key
-```
-
-If both API secret and token are configured, token will be used.
 
 #### Proxy configuration
 

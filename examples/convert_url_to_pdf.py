@@ -2,7 +2,7 @@ import convertapi
 import os
 import tempfile
 
-convertapi.api_secret = os.environ['CONVERT_API_SECRET'] # your api secret
+convertapi.api_credentials = os.environ['CONVERT_API_SECRET'] # your api secret or token
 
 # Example of converting Web Page URL to PDF file
 # https://www.convertapi.com/web-to-pdf

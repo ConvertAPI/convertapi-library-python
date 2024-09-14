@@ -2,7 +2,7 @@ import convertapi
 import os
 import tempfile
 
-convertapi.api_secret = os.environ['CONVERT_API_SECRET'] # your api secret
+convertapi.api_credentials = os.environ['CONVERT_API_SECRET'] # your api secret or token
 
 # Example of extracting first page from PDF and then chaining conversion PDF page to JPG.
 # https://www.convertapi.com/pdf-to-extract
