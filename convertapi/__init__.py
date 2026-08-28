@@ -1,4 +1,4 @@
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 from .exceptions import *
 from .client import Client
@@ -16,6 +16,10 @@ conversion_timeout_delta = 10
 upload_timeout = None
 download_timeout = None
 max_parallel_uploads = 10
+pool_connections = 4
+pool_maxsize = 20
+max_retries = 3
+retry_backoff_factor = 0.5
 verify_ssl = True
 
 client = Client()
