@@ -20,7 +20,7 @@ Install from source with:
 
 ### Requirements
 
-* Python 3.10+ (tested on 3.10–3.14)
+* Python 3 with `requests`; tested on Python 3.10–3.14
 
 ## Usage
 
