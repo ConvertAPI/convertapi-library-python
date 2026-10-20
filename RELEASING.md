@@ -2,7 +2,7 @@
 
 `main` is the only long-lived branch. Changes reach it through pull requests, merge commits only, and
 every pull request and push to `main` must pass the `build` check (`.github/workflows/build.yml`: the
-tests on Python 3.10–3.13, then build and check the sdist and wheel). Merging publishes nothing.
+tests on Python 3.10–3.14, then build and check the sdist and wheel). Merging publishes nothing.
 
 A release is a **GitHub Release** whose tag is the version, published by `tomasr78`:
 

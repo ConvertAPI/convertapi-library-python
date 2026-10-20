@@ -130,3 +130,22 @@ def test_http_error_without_json_body():
 		convertapi.convert('pdf', { 'Url': 'https://example.com' })
 
 	assert '502' in str(error.value)
+
+
+@pytest.mark.parametrize('max_parallel_uploads', [1, 10])
+@responses.activate
+def test_convert_files_uploads_each(max_parallel_uploads):
+	# Each upload must carry the caller's configuration: in 2.0.0 parallel uploads ran in child processes,
+	# which lost api_credentials under the spawn and forkserver start methods (macOS, Python 3.14 on Linux).
+	convertapi.max_parallel_uploads = max_parallel_uploads
+	responses.post(BASE + 'upload', json={ 'FileId': 'abc', 'FileExt': 'docx' })
+	responses.post(BASE + 'convert/any/to/zip', json=conversion('test.zip'))
+
+	convertapi.convert('zip', { 'Files': ['examples/files/test.docx', 'examples/files/test.pdf'] })
+
+	uploads = [call.request for call in responses.calls if call.request.url == BASE + 'upload']
+	assert [r.headers['Authorization'] for r in uploads] == ['Bearer test-token'] * 2
+	assert sorted(r.headers['Content-Disposition'] for r in uploads) == [
+		"attachment; filename*=UTF-8''test.docx", "attachment; filename*=UTF-8''test.pdf"]
+	sent = form(responses.calls[-1])
+	assert sent['Files[0]'] == 'abc' and sent['Files[1]'] == 'abc'
