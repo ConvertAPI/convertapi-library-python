@@ -1,0 +1,128 @@
+name: Build
+run-name: >-
+  ${{ github.event_name == 'pull_request' && format('Checking that #{0} builds', github.event.pull_request.number)
+   || format('Building {0}', github.ref_name) }}
+
+# Trunk-based: main is the only long-lived branch. Every pull request and every push to main runs the tests
+# on each supported Python and builds the sdist and wheel, but nothing is published here: this is a public
+# PyPI package, and PyPI versions are permanent, so a release is a deliberate act - publishing a GitHub
+# Release v{semver}, which runs publish.yml. The required status check is the `build` job, which passes
+# only when every test job passed and the packages built.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # A newer push to the same pull request cancels the older build; builds of main never cancel each other.
+  group: build-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install
+        run: python -m pip install . -r test-requirements.txt
+
+      # The tests marked `live` convert real files on ConvertAPI and run only when the CONVERTAPI_SECRET
+      # secret (an API token) exists; pull requests from forks and Dependabot never get it, so for them
+      # only the mocked tests run. CONVERTAPI_BASE_URI (a variable) can point them at another deployment.
+      - name: Test
+        env:
+          CONVERT_API_SECRET: ${{ secrets.CONVERTAPI_SECRET }}
+          CONVERT_API_BASE_URI: ${{ vars.CONVERTAPI_BASE_URI }}
+        run: python -m pytest -ra
+
+  build:
+    name: build
+    needs: test
+    # Runs even when a test job failed, so that the required check reports a failure instead of being
+    # skipped - a skipped required check counts as passed.
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check the tests
+        env:
+          RESULT: ${{ needs.test.result }}
+        run: |
+          if [ "$RESULT" != success ]; then
+            echo "::error::The tests did not pass ($RESULT)"
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Install the build tools
+        run: python -m pip install build==1.6.1 twine==7.0.0
+
+      # A development version that sorts below any real release and names the run, so a package
+      # downloaded from this run can be tried out but never mistaken for a published one. PyPI refuses
+      # local versions ("+g..."), so it could not be uploaded even by mistake.
+      - name: Build
+        id: build
+        env:
+          RUN: ${{ github.run_number }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          VERSION="0.0.0.dev$RUN+g${SHA:0:7}"
+          sed -i "s/^__version__ = .*/__version__ = '$VERSION'/" convertapi/__init__.py
+          grep -qx "__version__ = '$VERSION'" convertapi/__init__.py
+          python -m build -o dist
+          twine check --strict dist/*
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check the wheel installs
+        env:
+          VERSION: ${{ steps.build.outputs.version }}
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/venv/bin/python" -c 'import sys, convertapi; assert convertapi.__version__ == sys.argv[1], convertapi.__version__; print(convertapi.user_agent)' "$VERSION"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: convertapi-${{ steps.build.outputs.version }}
+          path: dist/
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Summary
+        env:
+          VERSION: ${{ steps.build.outputs.version }}
+        run: |
+          {
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Package | \`convertapi $VERSION\` (artifact only, not published) |"
+            echo "| Files | $(ls dist | paste -sd ',' - | sed 's/,/, /g') |"
+          } >> "$GITHUB_STEP_SUMMARY"

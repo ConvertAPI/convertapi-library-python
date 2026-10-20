@@ -1,3 +1,2 @@
-nose
-mock
-responses
+pytest>=8
+responses>=0.25

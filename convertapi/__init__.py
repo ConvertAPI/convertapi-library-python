@@ -1,4 +1,5 @@
-__version__ = '2.0.0'
+# A placeholder: publish.yml writes the release tag's version here before building (see RELEASING.md).
+__version__ = '0.0.0.dev0'
 
 from .exceptions import *
 from .client import Client
