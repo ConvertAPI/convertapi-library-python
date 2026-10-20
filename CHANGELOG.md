@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-## [2.0.1] — Unreleased
+## [2.0.1] — 2026-10-20
 
 ### Fixed
 - Converting several local files at once (`Files`) failed with `TypeError: can only concatenate str (not
