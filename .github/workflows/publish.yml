@@ -1,51 +1,255 @@
-name: Publish Python 🐍 distribution 📦 to PyPI
+name: Publish
+run-name: Publishing convertapi ${{ github.event.release.tag_name }} to PyPI
 
+# A release is a GitHub Release, never a merge. Merging to main only builds (build.yml); publishing the
+# Release v{semver} runs this file, which builds that tag's commit with the tag's version, tests it and
+# uploads it to PyPI. PyPI versions are public and permanent - a file name can never be uploaded again,
+# even after the release is deleted - so nothing here retries, overwrites or skips an existing version.
+#
+#   gh release create v2.0.1 --target main --generate-notes              -> convertapi 2.0.1
+#   gh release create v2.1.0-rc.1 --target main --prerelease ...         -> convertapi 2.1.0rc1
+#
+# A stable version must be a commit on main. A pre-release may be any commit, so a branch can be tried
+# out as a pre-release package before it is merged.
+#
+# PyPI Trusted Publishing trusts this file by name (publish.yml) and the pypi environment, so neither may
+# be renamed without changing the trusted publisher on https://pypi.org/manage/project/convertapi/settings/publishing/
 on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
+env:
+  # Only this account may publish a Release that reaches PyPI. GitHub cannot express this as a permission
+  # on the Team plan, so it is checked here (in both jobs, as either can be re-run on its own); the real
+  # controls are the v* tag ruleset (only repository admins create v* tags) and the pypi environment,
+  # which accepts only v* tags.
+  PUBLISHER: tomasr78
+  PACKAGE: convertapi
+
+concurrency:
+  group: publish-pypi
+  cancel-in-progress: false
+
 jobs:
-  build:
-    name: Build distribution 📦
+  package:
+    name: package
     runs-on: ubuntu-latest
-
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+      sha: ${{ steps.tag.outputs.sha }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.x"
-    - name: Install pypa/build
-      run: >-
-        python3 -m
-        pip install
-        build
-        --user
-    - name: Build a binary wheel and a source tarball
-      run: python3 -m build
-    - name: Store the distribution packages
-      uses: actions/upload-artifact@v3
-      with:
-        name: python-package-distributions
-        path: dist/
+      - name: Check who published the release
+        run: |
+          # A re-run keeps GITHUB_ACTOR as the original user; GITHUB_TRIGGERING_ACTOR is whoever pressed
+          # "Re-run", so both must be the publisher or anyone with write access could replay a release.
+          if [ "$GITHUB_ACTOR" != "$PUBLISHER" ] || [ "${GITHUB_TRIGGERING_ACTOR:-$GITHUB_ACTOR}" != "$PUBLISHER" ]; then
+            echo "::error::Only $PUBLISHER may publish to PyPI - this release was published by $GITHUB_ACTOR and run by ${GITHUB_TRIGGERING_ACTOR:-$GITHUB_ACTOR}."
+            exit 1
+          fi
+          echo "Published by $GITHUB_ACTOR"
 
-  publish-to-pypi:
-    name: >-
-      Publish Python 🐍 distribution 📦 to PyPI
-    needs:
-    - build
+      # The release event runs this file from the tag, so the workflow and the code come from the same commit.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check the tag and the version
+        id: tag
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          set -euo pipefail
+          # SemVer 2.0 without build metadata; PyPI needs a PEP 440 version, so the only pre-release
+          # labels are alpha.N, beta.N and rc.N, which become aN, bN and rcN (v2.1.0-rc.1 -> 2.1.0rc1).
+          SEMVER='^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-(alpha|beta|rc)\.(0|[1-9][0-9]*))?$'
+          if ! [[ "$TAG" =~ $SEMVER ]]; then
+            echo "::error::Tag '$TAG' is not v{major}.{minor}.{patch} or v{major}.{minor}.{patch}-{alpha|beta|rc}.{n}, e.g. v2.0.1 or v2.1.0-rc.1"
+            exit 1
+          fi
+          VERSION="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
+          PRE="${BASH_REMATCH[4]}"
+          case "${BASH_REMATCH[5]}" in
+            alpha) VERSION="${VERSION}a${BASH_REMATCH[6]}" ;;
+            beta)  VERSION="${VERSION}b${BASH_REMATCH[6]}" ;;
+            rc)    VERSION="${VERSION}rc${BASH_REMATCH[6]}" ;;
+          esac
+          if [ "$GITHUB_REF" != "refs/tags/$TAG" ]; then
+            echo "::error::The run is on $GITHUB_REF, not on the release tag refs/tags/$TAG"
+            exit 1
+          fi
+          SHA=$(git rev-parse "refs/tags/$TAG^{commit}")
+          if [ "$(git rev-parse HEAD)" != "$SHA" ]; then
+            echo "::error::Checked out $(git rev-parse HEAD), but $TAG points at $SHA"
+            exit 1
+          fi
+
+          # The GitHub "pre-release" tick and the version must agree, so a pre-release cannot become the
+          # package's latest stable version by a forgotten tick, and a stable version cannot hide as a pre-release.
+          if [ -n "$PRE" ]; then
+            if [ "$PRERELEASE" != true ]; then
+              echo "::error::$TAG is a pre-release version, so the GitHub Release must be marked as a pre-release (gh release create --prerelease)"
+              exit 1
+            fi
+          else
+            if [ "$PRERELEASE" = true ]; then
+              echo "::error::$TAG is a stable version, but the GitHub Release is marked as a pre-release. Use a pre-release version such as ${TAG}-rc.1, or untick pre-release."
+              exit 1
+            fi
+            if ! git merge-base --is-ancestor "$SHA" origin/main; then
+              echo "::error::$TAG ($SHA) is not on main. Stable versions are released from main only; release a branch as a pre-release instead."
+              exit 1
+            fi
+          fi
+
+          # PyPI answers 200 for every version it has, yanked ones included, and 404 for one it never had.
+          # (A deleted version answers 404 too, but PyPI then refuses its file names, so the upload fails.)
+          STATUS=$(curl -sS --retry 3 -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/$PACKAGE/$VERSION/json")
+          case "$STATUS" in
+            404) ;;
+            200) echo "::error::$PACKAGE $VERSION already exists on PyPI and can never be uploaded again. Release the next version instead."; exit 1 ;;
+            *)   echo "::error::Could not ask PyPI whether $PACKAGE $VERSION exists (HTTP $STATUS)"; exit 1 ;;
+          esac
+          if [ -z "$PRE" ]; then
+            LATEST=$(curl -fsS --retry 3 "https://pypi.org/pypi/$PACKAGE/json" | jq -r '.info.version')
+            if [ "$(printf '%s\n%s\n' "$LATEST" "$VERSION" | sort -V | tail -n1)" != "$VERSION" ]; then
+              echo "::warning::$VERSION is lower than the latest version $LATEST, so it will not become the version that new installs get."
+            fi
+          fi
+
+          {
+            echo "version=$VERSION"
+            echo "sha=$SHA"
+          } >> "$GITHUB_OUTPUT"
+          echo "Publishing $PACKAGE $VERSION from $SHA"
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Install the build and test tools
+        run: python -m pip install build==1.6.1 twine==7.0.0 -r test-requirements.txt
+
+      - name: Set the version
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          set -euo pipefail
+          sed -i "s/^__version__ = .*/__version__ = '$VERSION'/" convertapi/__init__.py
+          grep -qx "__version__ = '$VERSION'" convertapi/__init__.py
+
+      - name: Build
+        run: |
+          set -euo pipefail
+          python -m build -o dist
+          twine check --strict dist/*
+          ls -l dist
+
+      - name: Check the packages
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          set -euo pipefail
+          test -f "dist/$PACKAGE-$VERSION.tar.gz"
+          test -f "dist/$PACKAGE-$VERSION-py3-none-any.whl"
+          test "$(ls dist | wc -l)" -eq 2
+          unzip -p "dist/$PACKAGE-$VERSION-py3-none-any.whl" "$PACKAGE-$VERSION.dist-info/METADATA" | grep -qx "Version: $VERSION"
+
+      # The tests run against the built wheel, installed outside the checkout, so they see what users get.
+      # The `live` tests run too when the CONVERTAPI_SECRET secret exists.
+      - name: Test the wheel
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
+          CONVERT_API_SECRET: ${{ secrets.CONVERTAPI_SECRET }}
+          CONVERT_API_BASE_URI: ${{ vars.CONVERTAPI_BASE_URI }}
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install "dist/$PACKAGE-$VERSION-py3-none-any.whl" -r test-requirements.txt
+          mv convertapi "$RUNNER_TEMP/convertapi-source"
+          "$RUNNER_TEMP/venv/bin/python" -c 'import sys, convertapi; assert convertapi.__version__ == sys.argv[1], convertapi.__version__; assert "site-packages" in convertapi.__file__, convertapi.__file__' "$VERSION"
+          "$RUNNER_TEMP/venv/bin/python" -m pytest -ra
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist/
+          retention-days: 90
+          if-no-files-found: error
+
+  publish:
+    name: publish
+    needs: package
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     environment:
       name: pypi
-      url: https://pypi.org/p/convertapi
+      url: https://pypi.org/project/convertapi/${{ needs.package.outputs.version }}/
     permissions:
-      id-token: write  # IMPORTANT: mandatory for trusted publishing
-
+      contents: read
+      # Only for PyPI Trusted Publishing, which trades this job's OIDC token for a short-lived upload
+      # token. Nothing in this job runs the repository's code.
+      id-token: write
     steps:
-    - name: Download all the dists
-      uses: actions/download-artifact@v3
-      with:
-        name: python-package-distributions
-        path: dist/
-    - name: Publish distribution 📦 to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Check who published the release
+        run: |
+          if [ "$GITHUB_ACTOR" != "$PUBLISHER" ] || [ "${GITHUB_TRIGGERING_ACTOR:-$GITHUB_ACTOR}" != "$PUBLISHER" ]; then
+            echo "::error::Only $PUBLISHER may publish to PyPI - this release was published by $GITHUB_ACTOR and run by ${GITHUB_TRIGGERING_ACTOR:-$GITHUB_ACTOR}."
+            exit 1
+          fi
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+
+      - name: Check the packages again
+        env:
+          VERSION: ${{ needs.package.outputs.version }}
+        run: |
+          set -euo pipefail
+          ls -l dist
+          test -f "dist/$PACKAGE-$VERSION.tar.gz"
+          test -f "dist/$PACKAGE-$VERSION-py3-none-any.whl"
+          test "$(ls dist | wc -l)" -eq 2
+
+      # Trusted Publishing (no stored token) with PEP 740 attestations. skip-existing stays off: a version
+      # that already exists must fail loudly, never pass as published.
+      - name: Upload to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          packages-dir: dist/
+
+      # PyPI serves an upload within seconds, but its CDN can lag. A slow index is not a failed release,
+      # so this only warns.
+      - name: Wait for PyPI to serve the package
+        env:
+          VERSION: ${{ needs.package.outputs.version }}
+        run: |
+          set -uo pipefail
+          for _ in $(seq 1 20); do
+            if curl -fsS -o /dev/null "https://pypi.org/pypi/$PACKAGE/$VERSION/json"; then
+              echo "$PACKAGE $VERSION is available on PyPI"
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "::warning::$PACKAGE $VERSION was uploaded but PyPI has not served it after 10 minutes. Check https://pypi.org/project/$PACKAGE/$VERSION/"
+
+      - name: Summary
+        env:
+          VERSION: ${{ needs.package.outputs.version }}
+          SHA: ${{ needs.package.outputs.sha }}
+        run: |
+          {
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Package | [\`$PACKAGE $VERSION\`](https://pypi.org/project/$PACKAGE/$VERSION/) |"
+            echo "| Commit | \`$SHA\` |"
+            echo "| Published with | Trusted Publishing |"
+          } >> "$GITHUB_STEP_SUMMARY"

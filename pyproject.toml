@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "convertapi"
+# The version is the release tag: publish.yml writes it into convertapi/__init__.py before building.
+dynamic = ["version"]
+description = "ConvertAPI Python Client"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE.txt"]
+authors = [{ name = "Tomas Rutkauskas", email = "support@convertapi.com" }]
+keywords = ["convert", "api", "client", "conversion"]
+dependencies = ["requests>=2.4.2"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://www.convertapi.com"
+Documentation = "https://www.convertapi.com/doc"
+Source = "https://github.com/ConvertAPI/convertapi-library-python"
+Changelog = "https://github.com/ConvertAPI/convertapi-library-python/blob/main/CHANGELOG.md"
+Issues = "https://github.com/ConvertAPI/convertapi-library-python/issues"
+
+[tool.setuptools]
+packages = ["convertapi"]
+
+[tool.setuptools.dynamic]
+version = { attr = "convertapi.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live: calls the real ConvertAPI service; skipped unless CONVERT_API_SECRET is set",
+]

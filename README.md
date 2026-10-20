@@ -1,7 +1,7 @@
 # ConvertAPI Python Client
 
 [![PyPI version](https://badge.fury.io/py/convertapi.svg)](https://badge.fury.io/py/convertapi)
-[![Build Status](https://github.com/ConvertAPI/convertapi-library-python/actions/workflows/main.yml/badge.svg)](https://github.com/ConvertAPI/convertapi-library-python/actions)
+[![Build Status](https://github.com/ConvertAPI/convertapi-library-python/actions/workflows/build.yml/badge.svg)](https://github.com/ConvertAPI/convertapi-library-python/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Convert your files with our online file conversion API
@@ -16,11 +16,11 @@ Install with [pip](https://pypi.org/project/pip/):
 
 Install from source with:
 
-    python setup.py install
+    pip install .
 
 ### Requirements
 
-* Python 3.3+
+* Python 3.10+ (tested on 3.10–3.13)
 
 ## Usage
 
@@ -119,11 +119,18 @@ convertapi.base_uri = 'https://eu-v2.convertapi.com/'
 
 ### More examples
 
-Find more advanced examples in the [/examples](https://github.com/ConvertAPI/convertapi-library-python/tree/master/examples) folder.
+Find more advanced examples in the [/examples](https://github.com/ConvertAPI/convertapi-library-python/tree/main/examples) folder.
 
 ## Development
 
-Execute `API_TOKEN=api-token nosetests --nocapture` to run the tests.
+```bash
+pip install -e . -r test-requirements.txt
+pytest
+```
+
+Tests marked `live` call the real service and are skipped unless `CONVERT_API_SECRET` holds an API token
+(`CONVERT_API_BASE_URI` optionally points them at another deployment). Releases are described in
+[RELEASING.md](https://github.com/ConvertAPI/convertapi-library-python/blob/main/RELEASING.md).
 
 ## Contributing
 
@@ -131,4 +138,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Conver
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The library is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
