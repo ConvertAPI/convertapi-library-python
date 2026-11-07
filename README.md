@@ -121,6 +121,13 @@ convertapi.base_uri = 'https://eu-v2.convertapi.com/'
 
 Find more advanced examples in the [/examples](https://github.com/ConvertAPI/convertapi-library-python/tree/main/examples) folder.
 
+- [conversions_chaining.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/conversions_chaining.py) - Chain two conversions: PDF to JPG images, then the images to a ZIP
+- [convert_stream.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/convert_stream.py) - Convert text from an in-memory stream to PDF
+- [convert_url_to_pdf.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/convert_url_to_pdf.py) - Convert a web page URL to PDF
+- [convert_word_to_pdf_and_png.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/convert_word_to_pdf_and_png.py) - Convert one Word DOCX file to PDF and to PNG
+- [retrieve_user_information.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/retrieve_user_information.py) - Retrieve your ConvertAPI account information
+- [split_and_merge_pdf.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/split_and_merge_pdf.py) - Split a PDF and merge its first and last pages into a new PDF
+
 ## Development
 
 ```bash
