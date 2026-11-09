@@ -10,7 +10,7 @@ convertapi.api_credentials = os.environ['API_TOKEN'] # your api token
 result = convertapi.convert(
     'pdf',
     {
-        'Url': 'https://en.wikipedia.org/wiki/Data_conversion',
+        'Url': 'https://cdn.convertapi.com/public/files/demo',
         'FileName': 'web-example',
     },
     from_format = 'html',
