@@ -158,7 +158,10 @@ jobs:
           test -f "dist/$PACKAGE-$VERSION.tar.gz"
           test -f "dist/$PACKAGE-$VERSION-py3-none-any.whl"
           test "$(ls dist | wc -l)" -eq 2
-          unzip -p "dist/$PACKAGE-$VERSION-py3-none-any.whl" "$PACKAGE-$VERSION.dist-info/METADATA" | grep -qx "Version: $VERSION"
+          # METADATA goes to a file first. grep -q exits at the Version line, so unzip piped into it could
+          # still be writing (it writes 64 KB at a time), get SIGPIPE and fail the step under pipefail.
+          unzip -p "dist/$PACKAGE-$VERSION-py3-none-any.whl" "$PACKAGE-$VERSION.dist-info/METADATA" > "$RUNNER_TEMP/METADATA"
+          grep -qx "Version: $VERSION" "$RUNNER_TEMP/METADATA"
 
       # The tests run against the built wheel, installed outside the checkout, so they see what users get.
       # The `live` tests run too when the CONVERTAPI_SECRET secret exists.
