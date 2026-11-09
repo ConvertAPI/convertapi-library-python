@@ -5,7 +5,7 @@ import tempfile
 convertapi.api_credentials = os.environ['API_TOKEN'] # your api token
 
 # Example of converting Web Page URL to PDF file
-# https://www.convertapi.com/web-to-pdf
+# https://www.convertapi.com/html-to-pdf
 
 result = convertapi.convert(
     'pdf',
@@ -13,7 +13,7 @@ result = convertapi.convert(
         'Url': 'https://en.wikipedia.org/wiki/Data_conversion',
         'FileName': 'web-example',
     },
-    from_format = 'web',
+    from_format = 'html',
     timeout = 180,
 )
 
