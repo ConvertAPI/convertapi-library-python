@@ -4,26 +4,17 @@ import tempfile
 
 convertapi.api_credentials = os.environ['API_TOKEN'] # your api token
 
-# Example of extracting first page from PDF and then chaining conversion PDF page to JPG.
-# https://www.convertapi.com/pdf-to-extract
+# Example of converting the first page of a PDF to a JPG thumbnail.
 # https://www.convertapi.com/pdf-to-jpg
-
-pdf_result = convertapi.convert(
-    'extract',
-    {
-        'File': 'files/test.pdf',
-        'PageRange': 1,
-    }
-)
 
 jpg_result = convertapi.convert(
     'jpg',
     {
-        'File': pdf_result,
-        'ScaleImage': True,
-        'ScaleProportions': True,
+        'File': 'files/test.pdf',
+        'PageRange': 1,
         'ImageHeight': 300,
         'ImageWidth': 300,
+        'FitToSize': True,
     }
 )
 
