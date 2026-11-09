@@ -13,7 +13,7 @@ jpg_result = convertapi.convert('jpg', { 'File': 'files/test.pdf' })
 
 print("Conversions done. Cost: %s. Total files created: %s" % (jpg_result.conversion_cost, len(jpg_result.files)))
 
-zip_result = convertapi.convert('zip', { 'Files': jpg_result.files })
+zip_result = convertapi.convert('zip', { 'Files': jpg_result.files }, from_format = 'file')
 
 print("Conversions done. Cost: %s. Total files created: %s" % (zip_result.conversion_cost, len(zip_result.files)))
 
