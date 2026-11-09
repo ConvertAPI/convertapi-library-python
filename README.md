@@ -125,6 +125,7 @@ Find more advanced examples in the [/examples](https://github.com/ConvertAPI/con
 - [convert_stream.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/convert_stream.py) - Convert text from an in-memory stream to PDF
 - [convert_url_to_pdf.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/convert_url_to_pdf.py) - Convert a web page URL to PDF
 - [convert_word_to_pdf_and_png.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/convert_word_to_pdf_and_png.py) - Convert one Word DOCX file to PDF and to PNG
+- [create_pdf_thumbnail.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/create_pdf_thumbnail.py) - Turn the first page of a PDF into a JPG thumbnail
 - [retrieve_user_information.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/retrieve_user_information.py) - Retrieve your ConvertAPI account information
 - [split_and_merge_pdf.py](https://github.com/ConvertAPI/convertapi-library-python/blob/main/examples/split_and_merge_pdf.py) - Split a PDF and merge its first and last pages into a new PDF
 
