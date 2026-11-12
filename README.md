@@ -20,13 +20,13 @@ Install from source with:
 
 ### Requirements
 
-* Python 3 with `requests`; tested on Python 3.10–3.14
+* Python 3 with `requests`; tested on Python 3.10 to 3.14
 
 ## Usage
 
 ### Configuration
 
-You can get your API credentials at https://www.convertapi.com/a
+You can get your API token at https://www.convertapi.com/a/authentication
 
 ```python
 import convertapi
@@ -47,7 +47,7 @@ API_TOKEN=api-token HTTPS_PROXY=https://user:pass@127.0.0.1:9000/ python convert
 ### File conversion
 
 Convert a file to PDF example. All supported file formats and options can be found
-[here](https://www.convertapi.com/conversions).
+[here](https://www.convertapi.com/api).
 
 ```python
 result = convertapi.convert('pdf', { 'File': '/path/to/my_file.docx' })
@@ -85,7 +85,7 @@ result = convertapi.convert(
 #### Additional conversion parameters
 
 ConvertAPI accepts additional conversion parameters depending on selected formats. All conversion
-parameters and explanations can be found [here](https://www.convertapi.com/conversions).
+parameters and explanations can be found [here](https://www.convertapi.com/api).
 
 ```python
 result = convertapi.convert(
@@ -93,14 +93,14 @@ result = convertapi.convert(
     {
         'File': '/path/to/my_file.docx',
         'PageRange': '1-10',
-        'PdfResolution': '150',
+        'Pdfa': True,
     }
 )
 ```
 
 ### User information
 
-You can always check your usage by fetching [user information](https://www.convertapi.com/doc/user).
+You can always check your usage by fetching [user information](https://www.convertapi.com/docs/user-information).
 
 ```python
 user_info = convertapi.user()
@@ -111,7 +111,7 @@ print(user_info['ConversionsConsumed'])
 
 ### Alternative domain
 
-Set `base_uri` parameter to use other service domains. Dedicated to the region [domain list](https://www.convertapi.com/doc/servers-location).
+Set `base_uri` parameter to use other service domains. Dedicated to the region [domain list](https://www.convertapi.com/docs/servers-location).
 
 ```python
 convertapi.base_uri = 'https://eu-v2.convertapi.com/'
@@ -142,7 +142,7 @@ Tests marked `live` call the real service and are skipped unless `CONVERT_API_SE
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/ConvertAPI/convertapi-library-python. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/ConvertAPI/convertapi-library-python. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](https://www.contributor-covenant.org) code of conduct.
 
 ## License
 
